@@ -38,11 +38,17 @@ const Navbar = () => {
       </View>
       {(userData && isPopupVisible) && (
         <View style={styles.popupContainer}>
-          <TouchableOpacity onPress={() => router.push('/profile')} style={styles.popupItem}>
+          <TouchableOpacity onPress={() => {
+            togglePopup();
+            router.push('/profile');
+          }} style={styles.popupItem}>
             <Text style={styles.popupText}>{userData.name}</Text>
             <Text style={styles.popupText}>@{userData.username}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => router.push('/article/create')} style={styles.popupItem}>
+          <TouchableOpacity onPress={() => {
+            togglePopup();
+            router.push('/article/create');
+          }} style={styles.popupItem}>
             <Text style={styles.popupText}>Buat Article</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {

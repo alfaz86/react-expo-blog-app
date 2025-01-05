@@ -63,7 +63,7 @@ const DetailArticle = () => {
         <View style={styles.content}>
           <Text style={styles.title}>{article.title}</Text>
           <Text style={styles.author}>{article.user.name}</Text>
-          <Text style={styles.date}>Published on {article.published_at}</Text>
+          <Text style={styles.date}>Published on {article.created_at}</Text>
           <RenderHTML
             contentWidth={width}
             source={{ html: article.body_html }}

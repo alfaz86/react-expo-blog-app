@@ -20,10 +20,33 @@ export const AuthProvider = ({ children }) => {
 
     if (token) {
       const [, payload] = token.split('.');
-      const data = JSON.parse(atob(payload));
-      setUserData(data);
+      const decoded = JSON.parse(atob(payload));
+      setUserData(decoded);
+
+      const isExpired = isTokenExpired(decoded.exp);
+      if (isExpired) {
+        setJwtToken(null);
+        setUserData(null);
+        Alert.alert('Your session has expired, please log in again.');
+        router.push('/login');
+      }
+    } else {
+      setUserData(null);
     }
-  }
+  };
+
+  const isTokenExpired = (exp) => {
+    if (!exp) return true;
+    const currentTime = Math.floor(Date.now() / 1000);
+    return exp < currentTime;
+  };
+
+  const isLoggedIn = () => {
+    if (!jwtToken) return false;
+    const [, payload] = jwtToken.split('.');
+    const decoded = JSON.parse(atob(payload));
+    return !isTokenExpired(decoded.exp);
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -34,7 +57,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ jwtToken, userData, handleAuth, handleLogout }}>
+    <AuthContext.Provider value={{ jwtToken, userData, handleAuth, handleLogout, isLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

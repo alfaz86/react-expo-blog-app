@@ -5,6 +5,7 @@ import * as FileSystem from 'expo-file-system';
 import { createArticle } from '@/utils/api';
 import TextEditor from '@/components/Dom/TextEditor';
 import { base64ToBlob } from '@/utils/helper';
+import { router } from 'expo-router';
 
 const IS_DOM = typeof TextEditor !== "undefined";
 
@@ -51,14 +52,6 @@ const CreateArticle = () => {
     }
   };
 
-  const resetForm = () => {
-    setTitle('');
-    setDescription('');
-    setBodyHtml('');
-    setTags('');
-    setImage(null);
-  };
-
   const handleSubmit = async () => {
     if (!title || !description || !bodyHtml || !tags || !image) {
       if (Platform.OS !== 'web') {
@@ -74,7 +67,7 @@ const CreateArticle = () => {
     formData.append('title', title);
     formData.append('description', description);
     formData.append('body_html', bodyHtml);
-    formData.append('tags', JSON.stringify(tags.split(',')));
+    tags.split(',').forEach((tag) => formData.append('tags[]', tag));
 
     if (image) {
       const filename = image.uri.split('/').pop();
@@ -117,7 +110,7 @@ const CreateArticle = () => {
 
       if (response) {
         Alert.alert('Article created successfully!');
-        resetForm();
+        router.replace('/article/create');
       } else {
         const errorData = await response.json();
         console.error('Error response:', errorData);
@@ -131,16 +124,8 @@ const CreateArticle = () => {
     }
   };
 
-  const buildView = () => {
-    return (
-      <>
-        {/* <TextEditor setPlainText={setPlainText} setEditorState={setEditorState} setBodyHtml={setBodyHtml} /> */}
-      </>
-    )
-  }
-
   return (
-    <View style={styles.container}>
+    <>
       <ScrollView>
         <View style={styles.formContainer}>
 
@@ -162,20 +147,22 @@ const CreateArticle = () => {
             onChangeText={setTitle}
             style={styles.input}
           />
+
           <TextInput
             placeholder="Description"
             value={description}
             onChangeText={setDescription}
             style={styles.input}
           />
-          <TextInput
-            placeholder="Body HTML"
-            value={bodyHtml}
-            onChangeText={setBodyHtml}
-            style={styles.input}
-          />
 
-          {/* {buildView()} */}
+          {IS_DOM && (
+            <TextEditor dom={
+              {
+                scrollEnabled: false,
+                matchContents: true,
+              }
+            } setPlainText={setPlainText} setEditorState={setEditorState} setBodyHtml={setBodyHtml} />
+          )}
 
           <TextInput
             placeholder="Tags (comma separated)"
@@ -197,7 +184,7 @@ const CreateArticle = () => {
           </View>
         </View>
       </ScrollView>
-    </View>
+    </>
   );
 };
 

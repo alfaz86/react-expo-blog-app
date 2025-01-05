@@ -17,7 +17,7 @@ import { $getRoot, EditorState, LexicalEditor } from "lexical";
 const placeholder = "Enter some rich text...";
 
 const editorConfig = {
-  namespace: "React.js Demo",
+  namespace: "TextEditor",
   nodes: [],
   // Handling of errors during update
   onError(error) {
@@ -26,7 +26,9 @@ const editorConfig = {
   // The editor theme
   theme: ExampleTheme,
 };
+
 export default function TextEditor({
+  dom,
   setPlainText,
   setEditorState,
   setBodyHtml,

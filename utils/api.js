@@ -1,12 +1,13 @@
 import axios from "axios";
 import { getToken } from "./auth";
 
-const API_BASE_URL = "https://d35b-180-251-235-145.ngrok-free.app/api";
+const API_BASE_URL = "http://192.168.1.9:8000/api";
 
 export const fetchArticles = async (page = 1, perPage = 10) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/articles?page=${page}&per_page=${perPage}`);
-    return response.data;
+    const { data } = response.data;
+    return data;
   } catch (error) {
     throw new Error('Failed to fetch articles');
   }
@@ -15,7 +16,8 @@ export const fetchArticles = async (page = 1, perPage = 10) => {
 export const fetchDetailArticle = async (id) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/articles/${id}`);
-    return response.data;
+    const { data } = response.data;
+    return data;
   } catch (error) {
     throw new Error('Failed to fetch article');
   }
@@ -24,7 +26,8 @@ export const fetchDetailArticle = async (id) => {
 export const fetchArticleComments = async (id) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/comments?a_id=${id}`);
-    return response.data;
+    const { data } = response.data;
+    return data;
   } catch (error) {
     throw new Error('Failed to fetch comments');
   }
@@ -43,7 +46,8 @@ export const createArticle = async (formData) => {
         'Authorization': 'Bearer ' + token,
       },
     });
-    return response.data;
+    const { data } = response.data;
+    return data;
   } catch (error) {
     throw new Error('Failed to create article');
   }
