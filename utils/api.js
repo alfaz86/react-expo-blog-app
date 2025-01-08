@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getToken } from "./auth";
 
-const API_BASE_URL = "http://192.168.1.9:8000/api";
+const API_BASE_URL = "https://be-expo-blog-app.vercel.app/api";
 
 export const fetchArticles = async (page = 1, perPage = 10) => {
   try {

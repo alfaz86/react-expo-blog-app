@@ -1,7 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, ActivityIndicator, useWindowDimensions, Image } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  ActivityIndicator,
+  useWindowDimensions,
+  Image,
+  TextInput,
+  Button,
+  Alert,
+} from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { fetchDetailArticle, fetchArticleComments } from '@/utils/api';
+import { fetchDetailArticle, fetchArticleComments } from '@/utils/api'; // Tambahkan postComment
 import RenderHTML from 'react-native-render-html';
 import ArticleComment from '@/components/Article/ArticleComment';
 
@@ -11,6 +22,9 @@ const DetailArticle = () => {
   const [article, setArticle] = useState(null);
   const [comments, setComments] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingComments, setLoadingComments] = useState(true); // State untuk loading komentar
+  const [newComment, setNewComment] = useState(''); // State untuk komentar baru
+  const [isSubmitting, setIsSubmitting] = useState(false); // State untuk status submit
 
   useEffect(() => {
     if (!id) return;
@@ -25,14 +39,32 @@ const DetailArticle = () => {
         setLoading(false);
       });
 
-    // fetchArticleComments(id)
-    //   .then((data) => {
-    //     setComments(data);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
+    setLoadingComments(true); // Set loading comments sebelum fetch
+    fetchArticleComments(id)
+      .then((data) => {
+        setComments(data);
+        setLoadingComments(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoadingComments(false);
+      });
   }, [id]);
+
+  const handleCommentSubmit = () => {
+    if (!newComment.trim()) {
+      Alert.alert('Validation', 'Comment cannot be empty.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // post comment
+
+    // alert the comment feature is not implemented yet
+    Alert.alert('Comment', 'Comment feature is not implemented yet.');
+    setIsSubmitting(false);
+  };
 
   if (loading) {
     return (
@@ -91,14 +123,35 @@ const DetailArticle = () => {
                 },
                 enableExperimentalPercentWidth: true,
               },
-            }} />
+            }}
+          />
         </View>
 
         <View style={styles.containerComment}>
           <Text style={styles.titleComment}>Comments</Text>
-          {comments && comments.map((comment) => (
-            <ArticleComment key={comment.id} comment={comment} />
-          ))}
+          {/* Input Komentar */}
+          <TextInput
+            style={styles.commentInput}
+            value={newComment}
+            onChangeText={setNewComment}
+            placeholder="Write a comment..."
+            multiline
+          />
+          <Button
+            title={isSubmitting ? 'Posting...' : 'Post Comment'}
+            onPress={handleCommentSubmit}
+            disabled={isSubmitting}
+          />
+
+          {/* Loading Comments */}
+          {loadingComments ? (
+            <ActivityIndicator size="small" color="#0000ff" />
+          ) : (
+            comments &&
+            comments.map((comment) => (
+              <ArticleComment key={comment.id} comment={comment} />
+            ))
+          )}
         </View>
       </ScrollView>
     </View>
@@ -150,8 +203,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  commentContent: {
-    fontSize: 14,
+  commentInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: '#f9f9f9',
   },
   containerComment: {
     flex: 1,
@@ -161,7 +219,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#f0f0f0',
     marginTop: 10,
     paddingTop: 10,
-  }
+  },
 });
 
 export default DetailArticle;

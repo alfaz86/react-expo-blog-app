@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const API_BASE_URL = 'http://192.168.1.9:8000/api';
+const API_BASE_URL = 'https://be-expo-blog-app.vercel.app/api';
 
 /**
  * Simpan token JWT ke AsyncStorage
